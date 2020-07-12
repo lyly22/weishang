@@ -1,11 +1,12 @@
 <template>
   <div id="app">
-    <el-row class="mt-10">
-      <el-col :span="22">
-        <img src="./assets/logo.png" width="250" class='logo' />
+    <el-row class="mt-10" v-if="isShowTop">
+      <el-col :span="20">
+        <img src="./assets/logo.png" width="250" class="logo" />
       </el-col>
-      <el-col :span="2" class="mt20">
-        <el-button round size="medium" @click="toLogin" v-if="!userName">登录</el-button>
+      <el-col :span="4" class="mt50">
+        <el-button type="primary" round @click="goAdd">发布货源</el-button>
+        <el-button round @click="toLogin" v-if="!userName">登录</el-button>
         <el-dropdown @command="logOut" placement="bottom" v-else>
           <div class="avatar">
             <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
@@ -22,19 +23,17 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "App",
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
-    userName() {
-      return localStorage.getItem("userName");
+    isShowTop() {
+      return ["/login", "/register",'/add'].includes(this.$route.path) ? false : true;
     },
-    userId() {
-      return localStorage.getItem("userId");
-    }
+    ...mapState(["userName", "userId", "jifen"])
   },
   methods: {
     toLogin() {
@@ -46,6 +45,16 @@ export default {
         localStorage.setItem("userId", "");
         this.$router.push({ path: "/login" });
       }
+    },
+    goAdd() {
+      if (!this.userName) {
+        this.$message({
+          message: "请先登录",
+          type: "warning"
+        });
+        return;
+      }
+      this.$router.push({ path: "/add" });
     }
   }
 };
@@ -57,9 +66,9 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  .logo{
+  .logo {
     display: inline-block;
-    margin:-20px 0 -40px 30px;
+    margin: -20px 0 -40px 30px;
   }
   .avatar {
     margin-top: 30px;

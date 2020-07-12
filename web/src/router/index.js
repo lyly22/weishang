@@ -2,13 +2,13 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import register from '@/components/register'
 import login from '@/components/login'
-import blogs from '@/components/blogs'
 import index from '@/components/index'
 import detail from '@/components/detail'
 import list from '@/components/list'
+import add from '@/components/add'
 
 Vue.use(Router)
-export default new Router({
+let router = new Router({
   routes: [
     {
       path: '/',
@@ -36,9 +36,30 @@ export default new Router({
       component: detail
     },
     {
-      path: '/blogs',
-      name: 'blogs',
-      component: blogs
+      path: '/add',
+      name: 'add',
+      component: add,
+      meta: {
+        requireAuth: true
+      }
     }
   ]
 })
+router.beforeEach((to, from, next) => {
+  let islogin = localStorage.getItem('userName')
+  if (to.path == '/login') {
+    if (islogin) {
+      next('/')
+    } else {
+      next()
+    }
+  } else {
+    if (to.meta.requireAuth && !islogin) {
+      next('/login')
+    } else {
+      next()
+    }
+  }
+})
+
+export default router

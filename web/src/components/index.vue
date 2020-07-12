@@ -113,7 +113,9 @@ export default {
       ]
     };
   },
-  mounted() {},
+  mounted() {
+    console.log(this.$store.state.userName)
+  },
   methods: {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);

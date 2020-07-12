@@ -13,6 +13,9 @@
           <el-button type="primary" round @click="submit">登录</el-button><br>
           <router-link to="/register">
             <el-button type="text">注册</el-button>
+          </router-link><br>
+          <router-link to="/">
+            <el-button type="text">首页</el-button>
           </router-link>
         </el-form>
       </el-col>

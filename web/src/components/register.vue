@@ -16,6 +16,9 @@
           <el-button type="primary" round @click="submit">注册</el-button><br>
           <router-link to="/login">
             <el-button type="text">登录</el-button>
+          </router-link><br>
+          <router-link to="/">
+            <el-button type="text">首页</el-button>
           </router-link>
         </el-form>
       </el-col>
@@ -25,7 +28,6 @@
 
 <script>
 import axios from "axios";
-import qs from "qs";
 import { register } from "@/api/user.js";
 export default {
   name: "register",
