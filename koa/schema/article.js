@@ -37,12 +37,12 @@ var todolist = sequelize.define(
     bannerUrl: {
       type: Sequelize.STRING,
       allowNull: false,
-      field: 'fileUrl'
+      field: 'bannerUrl'
     },
     picUrl: {
       type: Sequelize.STRING,
       allowNull: false,
-      field: 'fileUrl'
+      field: 'picUrl'
     },
     isTop: {
       type: Sequelize.STRING,

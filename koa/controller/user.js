@@ -11,7 +11,7 @@ class UserController {
     try {
       const ifExist = await UserModel.ifExistUser(req)
       if (!ifExist) {
-        const ret = await UserModel.create(req)
+        await UserModel.create(req)
         ctx.body = {
           code: 0,
           msg: "注册成功",

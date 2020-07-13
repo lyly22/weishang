@@ -6,9 +6,9 @@ export function getBlogs(params) {
     params
   });
 }
-export function getBlog(params) {
+export function getDetail(params) {
   return Service({
-    url: "/blog",
+    url: "/article",
     method: "get",
     params
   });
@@ -19,9 +19,9 @@ export function delBlog(params) {
     data: params
   });
 }
-export function addBlog(params) {
+export function create(params) {
   return Service({
-    url: "/addBlog",
+    url: "/create",
     data: params
   });
 }

@@ -1,4 +1,5 @@
 const ArticleModel = require("../modules/article");
+const UserModel = require("../modules/user");
 
 class articleController {
   /**
@@ -9,62 +10,87 @@ class articleController {
   static async create(ctx) {
     //接收客服端
     let req = ctx.request.body;
-    if (req.title && req.userId && req.content && req.category) {
+    if (req.title && req.userId && req.content && req.category && req.weixin) {
       try {
         //创建文章模型
         const ret = await ArticleModel.create(req);
         //使用刚刚创建的文章ID查询文章详情，且返回文章详情信息
-        const data = await ArticleModel.getArticleDetail(ret.id);
+        // const data = await ArticleModel.getArticleDetail(ret.id);
         ctx.body = {
-          code: 200,
-          msg: "创建文章成功",
-          data,
+          code: 0,
+          msg: "创建成功",
+          data: ret,
         };
       } catch (err) {
         ctx.body = {
-          code: 412,
-          msg: "创建文章失败",
+          code: -1,
+          msg: "创建失败",
           data: err,
         };
       }
     } else {
-      ctx.response.status = 416;
       ctx.body = {
-        code: 200,
+        code: -1,
         msg: "参数不齐全",
       };
     }
   }
 
+  static async delete(ctx) {
+    let id = ctx.params.id;
+    if (id) {
+      try {
+        // 查询文章详情模型
+        let data = await ArticleModel.delArticle(id);
+        ctx.body = {
+          code: 0,
+          msg: "删除成功",
+          data,
+        };
+      } catch (err) {
+        ctx.body = {
+          code: -1,
+          msg: "删除失败",
+          data,
+        };
+      }
+    } else {
+      ctx.body = {
+        code: -1,
+        msg: "文章ID必须传",
+      };
+    }
+  }
   /**
    * 获取文章详情
    * @param ctx
    * @returns {Promise.<void>}
    */
   static async detail(ctx) {
-    let id = ctx.params.id;
+    let id = ctx.query.id;
     if (id) {
       try {
         // 查询文章详情模型
         let data = await ArticleModel.getArticleDetail(id);
-        ctx.response.status = 200;
+        let user = await UserModel.getUserDetail(data.userId);
         ctx.body = {
-          code: 200,
+          code: 0,
           msg: "查询成功",
-          data,
+          data:{
+            ...data,
+            userName:user.userName
+          },
         };
       } catch (err) {
-        ctx.response.status = 412;
         ctx.body = {
-          code: 412,
+          code: -1,
           msg: "查询失败",
           data,
         };
       }
     } else {
-      ctx.response.status = 416;
       ctx.body = {
-        code: 416,
+        code: -1,
         msg: "文章ID必须传",
       };
     }
@@ -87,9 +113,8 @@ class articleController {
         },
       };
     } catch (err) {
-      ctx.response.status = 412;
       ctx.body = {
-        code: 412,
+        code: -1,
         msg: "查询失败",
         data,
       };

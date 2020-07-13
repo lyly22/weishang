@@ -4,20 +4,17 @@ const Article = require("../schema/article");
 Article.sync({ force: false }); //自动创建表
 
 class ArticleModel {
-  /**
-   * 创建文章模型
-   * @param data
-   * @returns {Promise<*>}
-   */
   static async create(data) {
     return await Article.create({
       title: data.title, //标题
       userId: data.userId, //作者
       content: data.content, //文章内容
-      weixin:data.weixin,
-      bannerUrl:data.bannerUrl,
-      picUrl:data.picUrl,
-      category:data.title
+      weixin: data.weixin,
+      category: data.category,
+      bannerUrl: data.bannerUrl,
+      picUrl: data.picUrl,
+      isTop: 0,
+      createTime: new Date().getTime()
     });
   }
 
@@ -45,6 +42,13 @@ class ArticleModel {
       order: [["id", "DESC"]],
       offset: start,
       limit: 10,
+    });
+  }
+  static async delArticle(id) {
+    return await Article.destroy({
+      where: {
+        id,
+      },
     });
   }
 }

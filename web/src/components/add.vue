@@ -9,8 +9,8 @@
           <el-form-item label="微信号" prop="weixin">
             <el-input v-model="form.weixin" maxlength="20"></el-input>
           </el-form-item>
-          <el-form-item label="类型" prop="catagory">
-            <el-select v-model="form.catagory" placeholder="请选择">
+          <el-form-item label="类型" prop="category">
+            <el-select v-model="form.category" placeholder="请选择">
               <el-option
                 v-for="item in types"
                 :key="item.value"
@@ -73,6 +73,7 @@
 
 <script>
 import E from "wangeditor";
+import { create } from "@/api/article.js";
 export default {
   data() {
     return {
@@ -80,13 +81,15 @@ export default {
       rules: {
         title: [{ required: true, message: "请输入标题", trigger: "blur" }],
         weixin: [{ required: true, message: "请输入微信", trigger: "blur" }],
-        catagory: [{ required: true, message: "请选择类型", trigger: "blur" }]
+        category: [{ required: true, message: "请选择类型", trigger: "blur" }]
       },
       editor: null,
       editorContent: "",
       cancelVisible: false,
       bannerList: [],
       picList: [],
+      bannerUrl: "",
+      picUrl: "",
       types: [
         {
           value: 1,
@@ -147,15 +150,42 @@ export default {
         });
         return;
       }
+      // if (!this.bannerUrl) {
+      //   this.$message({
+      //     message: "请上传封面图",
+      //     type: "warning"
+      //   });
+      //   return;
+      // }
+      var that = this;
       this.$refs["form"].validate(valid => {
         if (valid) {
           let params = {
             ...this.form,
-            userId: localStorage.getItem('item'),
+            userId: localStorage.getItem("userId"),
+            content: this.editorContent,
             bannerUrl: "",
             picUrl: ""
           };
-          console.log(params)
+          console.log(params);
+          create(params)
+            .then(function(res) {
+              if (res.code === 0) {
+                // that.info = res.data;
+                // that.info.create_time = dateFormat(
+                //   "YYYY-mm-dd HH:MM",
+                //   new Date(that.info.create_time + "")
+                // );
+                // that.info.fileUrl = that.info.fileUrl.split(",");
+                that.$router.push({
+                  path: "/detail",
+                  query: { id: res.data.id }
+                });
+              }
+            })
+            .catch(function(err) {
+              console.log(err);
+            });
         }
       });
     },
@@ -168,7 +198,7 @@ export default {
       this.$router.push({ path: "/" });
     },
     fileChange(file, fileList) {
-      console.log(fileList)
+      console.log(fileList);
       this.bannerList = fileList;
       const isLt2M = file.size / 1024 / 1024 < 5;
       if (!isLt2M) {
