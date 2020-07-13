@@ -23,10 +23,9 @@ var userList = sequelize.define(
     },
     // 内容
     jifen: {
-      type: Sequelize.NUMBER,
-      allowNull: false,
+      type: Sequelize.INTEGER,
       field: 'jifen',
-      defaultValue: 0
+      default: '0'
     }
   },
   {

@@ -1,47 +1,60 @@
-var sequelize = require("../config/db.js");
-var Sequelize = require('sequelize');
+var sequelize = require('../config/db.js')
+var Sequelize = require('sequelize')
+
 var todolist = sequelize.define(
-  "article",
+  'article',
   {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       allowNull: true,
-      autoIncrement: true,
+      autoIncrement: true
     },
-    //文章标题
+    // 文章标题
     title: {
       type: Sequelize.STRING,
       allowNull: false,
-      field: "title",
+      field: 'title'
     },
-    //内容
+    // 内容
     content: {
       type: Sequelize.STRING,
       allowNull: false,
-      field: "content",
+      field: 'content'
     },
-    //作者
-    user_id: {
+    // 内容
+    weixin: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      field: 'weixin'
+    },
+    // 作者
+    userId: {
       type: Sequelize.INTEGER,
       allowNull: false,
-      field: "user_id",
+      field: 'userId'
     },
-    fileUrl: {
+    bannerUrl: {
       type: Sequelize.STRING,
       allowNull: false,
-      field: "fileUrl",
+      field: 'fileUrl'
     },
-    is_top: {
+    picUrl: {
       type: Sequelize.STRING,
       allowNull: false,
-      field: "is_top",
-      default: "0",
+      field: 'fileUrl'
+    },
+    isTop: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      field: 'isTop',
+      default: '0'
     },
     // 创建时间
-    create_time: {
+    createTime: {
       type: Sequelize.DATE,
-    },
+      allowNull: false
+    }
   },
   {
     /**
@@ -49,7 +62,7 @@ var todolist = sequelize.define(
      * 如果为fasle，mysql创建的表名称会是复数，即users
      * 如果指定的表名称本身就是复数，则形式不变
      */
-    freezeTableName: true,
+    freezeTableName: true
   }
-);
-module.exports = todolist;
+)
+module.exports = todolist

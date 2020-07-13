@@ -13,10 +13,9 @@ export default new Vuex.Store({
   },
   mutations: {
     baseInfo(state, v) {
-      state.userId = v.userId
+      state.userId = v.id
       state.userName = v.userName
       state.jifen = v.jifen
-      state.vipCount = v.vipCount
     },
     vipCount(state, v) {
       state.vipCount = v.vipCount

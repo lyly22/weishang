@@ -9,11 +9,15 @@ class ArticleModel {
    * @param data
    * @returns {Promise<*>}
    */
-  static async createArticle(data) {
+  static async create(data) {
     return await Article.create({
       title: data.title, //标题
-      user_id: data.userId, //作者
+      userId: data.userId, //作者
       content: data.content, //文章内容
+      weixin:data.weixin,
+      bannerUrl:data.bannerUrl,
+      picUrl:data.picUrl,
+      category:data.title
     });
   }
 

@@ -9,15 +9,35 @@
           <el-form-item label="微信号" prop="weixin">
             <el-input v-model="form.weixin" maxlength="20"></el-input>
           </el-form-item>
-          <el-form-item label="上传图片">
+          <el-form-item label="类型" prop="catagory">
+            <el-select v-model="form.catagory" placeholder="请选择">
+              <el-option
+                v-for="item in types"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="封面图片">
             <el-upload
               action="http://127.0.0.1:5000/upload"
               list-type="picture-card"
-              :file-list="fileList"
-              :on-preview="handlePictureCardPreview"
-              :on-remove="handleRemove"
+              :file-list="bannerList"
               :auto-upload="false"
               :on-change="fileChange"
+              :accept="'image/*'"
+            >
+              <i class="el-icon-plus"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="详情图片">
+            <el-upload
+              action="http://127.0.0.1:5000/upload"
+              list-type="picture-card"
+              :file-list="picList"
+              :auto-upload="false"
+              :on-change="fileChanget"
               :accept="'image/*'"
               :multiple="true"
             >
@@ -29,7 +49,7 @@
           </div>
           <div class="mt20 center">
             <el-button type="primary" round @click="add">发布</el-button>
-            <el-button round @click="cancel">取消</el-button>
+            <el-button round @click="cancelVisible=true">取消</el-button>
           </div>
           <div v-html="editorContent"></div>
         </el-form>
@@ -42,7 +62,7 @@
       width="30%"
       :close="close"
     >
-      <span>确认关闭？</span>
+      <span>确认取消？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelVisible = false">取 消</el-button>
         <el-button type="primary" @click="close">确 定</el-button>
@@ -59,12 +79,32 @@ export default {
       form: {},
       rules: {
         title: [{ required: true, message: "请输入标题", trigger: "blur" }],
-        weixin: [{ required: true, message: "请输入微信", trigger: "blur" }]
+        weixin: [{ required: true, message: "请输入微信", trigger: "blur" }],
+        catagory: [{ required: true, message: "请选择类型", trigger: "blur" }]
       },
       editor: null,
       editorContent: "",
       cancelVisible: false,
-      fileList: []
+      bannerList: [],
+      picList: [],
+      types: [
+        {
+          value: 1,
+          label: "服装"
+        },
+        {
+          value: 2,
+          label: "鞋"
+        },
+        {
+          value: 3,
+          label: "包"
+        },
+        {
+          value: 4,
+          label: "化妆品"
+        }
+      ]
     };
   },
   created() {},
@@ -110,25 +150,34 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           let params = {
-            userId: 1,
-            title: this.form.title,
-            content: this.form.content,
-            weixin: this.form.weixin,
-            catagory: "",
+            ...this.form,
+            userId: localStorage.getItem('item'),
             bannerUrl: "",
-            imgUrl: ""
+            picUrl: ""
           };
+          console.log(params)
         }
       });
     },
     close() {
       this.cancelVisible = false;
       this.$refs.form.resetFields();
-      this.fileList = [];
+      this.bannerList = [];
+      this.picList = [];
       this.form = {};
+      this.$router.push({ path: "/" });
     },
     fileChange(file, fileList) {
-      this.fileList = fileList;
+      console.log(fileList)
+      this.bannerList = fileList;
+      const isLt2M = file.size / 1024 / 1024 < 5;
+      if (!isLt2M) {
+        this.$message.error("上传图片大小不能超过 5MB!");
+        return false;
+      }
+    },
+    fileChanget(file, fileList) {
+      this.picList = fileList;
       const isLt2M = file.size / 1024 / 1024 < 5;
       if (!isLt2M) {
         this.$message.error("上传图片大小不能超过 5MB!");

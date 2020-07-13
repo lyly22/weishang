@@ -9,21 +9,18 @@ class articleController {
   static async create(ctx) {
     //接收客服端
     let req = ctx.request.body;
-    if (req.title && req.author && req.content && req.category) {
+    if (req.title && req.userId && req.content && req.category) {
       try {
         //创建文章模型
-        const ret = await ArticleModel.createArticle(req);
+        const ret = await ArticleModel.create(req);
         //使用刚刚创建的文章ID查询文章详情，且返回文章详情信息
         const data = await ArticleModel.getArticleDetail(ret.id);
-
-        ctx.response.status = 200;
         ctx.body = {
           code: 200,
           msg: "创建文章成功",
           data,
         };
       } catch (err) {
-        ctx.response.status = 412;
         ctx.body = {
           code: 412,
           msg: "创建文章失败",

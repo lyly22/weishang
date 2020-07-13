@@ -4,11 +4,11 @@
     <el-row>
       <el-col :span="12" :offset="6">
         <el-form ref="ruleForm" label-width="80px" :model="ruleForm" :rules="rules">
-          <el-form-item label="用户名" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
+          <el-form-item label="用户名" prop="userName">
+            <el-input v-model="ruleForm.userName"></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="pwd">
-            <el-input v-model="ruleForm.pwd"></el-input>
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="ruleForm.password"></el-input>
           </el-form-item>
           <el-form-item label="确认密码" prop="checkPass">
             <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import { register } from "@/api/user.js";
 export default {
   name: "register",
@@ -35,7 +34,7 @@ export default {
     var validatePass = (rule, value, callback) => {
       if (!value) {
         callback(new Error("请再次输入密码"));
-      } else if (value !== this.ruleForm.pwd) {
+      } else if (value !== this.ruleForm.password) {
         callback(new Error("两次输入密码不一致!"));
       } else {
         callback();
@@ -44,8 +43,8 @@ export default {
     return {
       ruleForm: {},
       rules: {
-        name: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-        pwd: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
         checkPass: [
           { validator: validatePass, required: true, trigger: "blur" }
         ]

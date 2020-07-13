@@ -4,7 +4,7 @@
       <el-col :span="20">
         <img src="./assets/logo.png" width="250" class="logo" />
       </el-col>
-      <el-col :span="4" class="mt50">
+      <el-col :span="4" class="mt36">
         <el-button type="primary" round @click="goAdd">发布货源</el-button>
         <el-button round @click="toLogin" v-if="!userName">登录</el-button>
         <el-dropdown @command="logOut" placement="bottom" v-else>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "App",
   data() {
@@ -31,16 +31,26 @@ export default {
   },
   computed: {
     isShowTop() {
-      return ["/login", "/register",'/add'].includes(this.$route.path) ? false : true;
+      return ["/login", "/register", "/add"].includes(this.$route.path)
+        ? false
+        : true;
     },
-    ...mapState(["userName", "userId", "jifen"])
+    userName(){
+      return localStorage.getItem('userName')
+    }
+    // ...mapState(["userName", "userId", "jifen"])
   },
   methods: {
+    // ...mapMutations(["baseInfo"]),
     toLogin() {
       this.$router.push({ path: "/login" });
     },
     logOut(v) {
       if (v === "logOut") {
+        // this.baseInfo({
+        //   userId: null,
+        //   userName: null
+        // });
         localStorage.setItem("userName", "");
         localStorage.setItem("userId", "");
         this.$router.push({ path: "/login" });
@@ -71,7 +81,8 @@ export default {
     margin: -20px 0 -40px 30px;
   }
   .avatar {
-    margin-top: 30px;
+    position: relative;
+    top: 10px;
     display: flex;
     align-items: center;
     cursor: pointer;
