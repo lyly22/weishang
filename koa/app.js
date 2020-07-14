@@ -7,6 +7,7 @@ const bodyparser = require("koa-bodyparser");
 const logger = require("koa-logger");
 const cors = require("koa-cors");
 app.use(cors());
+
 const user = require("./routes/user");
 const article = require("./routes/article");
 

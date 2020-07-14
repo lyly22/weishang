@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { Message, Loading } from 'element-ui'
 const ConfigBaseURL =
-process.env.NODE_ENV === 'production'
-  ? 'http://127.0.0.1:3000'
-  : 'http://127.0.0.1:3000'
+  process.env.NODE_ENV === 'production'
+    ? 'http://127.0.0.1:3000'
+    : 'http://127.0.0.1:3000'
 let loadingInstance = null
 export const Service = axios.create({
   timeout: 7000,
@@ -33,16 +33,10 @@ Service.interceptors.response.use(
   response => {
     loadingInstance.close()
     if (response.status === 200) {
-      if (response.data.msg && response.data.code === 0) {
+      if (response.data.msg) {
         Message({
           message: response.data.msg,
-          type: 'success',
-          duration: 3 * 1000
-        })
-      } else {
-        Message({
-          message: response.data.msg,
-          type: 'error',
+          type: response.data.code === 0 ? 'success' : 'error',
           duration: 3 * 1000
         })
       }

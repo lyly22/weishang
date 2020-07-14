@@ -19,13 +19,16 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="封面图片">
+          <el-form-item label="封面图片" prop="bannerUrl">
             <el-upload
-              action="http://127.0.0.1:5000/upload"
+              action
+              :http-request="uploadBanner"
               list-type="picture-card"
               :file-list="bannerList"
               :auto-upload="false"
               :on-change="fileChange"
+              :limit="1"
+              :on-remove="removeBanner"
               :accept="'image/*'"
             >
               <i class="el-icon-plus"></i>
@@ -33,11 +36,13 @@
           </el-form-item>
           <el-form-item label="详情图片">
             <el-upload
-              action="http://127.0.0.1:5000/upload"
+              action
+              :http-request="uploadPic"
               list-type="picture-card"
               :file-list="picList"
               :auto-upload="false"
               :on-change="fileChanget"
+              :on-remove="removePic"
               :accept="'image/*'"
               :multiple="true"
             >
@@ -47,11 +52,13 @@
           <div id="wangeditor">
             <div ref="editorElem" style="text-align:left;"></div>
           </div>
+          <el-form-item label="是否发布为vip" label-width="100px">
+            <el-switch v-model="isVip" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          </el-form-item>
           <div class="mt20 center">
             <el-button type="primary" round @click="add">发布</el-button>
             <el-button round @click="cancelVisible=true">取消</el-button>
           </div>
-          <div v-html="editorContent"></div>
         </el-form>
       </el-col>
     </el-row>
@@ -73,7 +80,7 @@
 
 <script>
 import E from "wangeditor";
-import { create } from "@/api/article.js";
+import { create, upload,uploads } from "@/api/article.js";
 export default {
   data() {
     return {
@@ -81,8 +88,12 @@ export default {
       rules: {
         title: [{ required: true, message: "请输入标题", trigger: "blur" }],
         weixin: [{ required: true, message: "请输入微信", trigger: "blur" }],
+        bannerUrl: [
+          { required: true, message: "请上传封面图", trigger: "blur" }
+        ],
         category: [{ required: true, message: "请选择类型", trigger: "blur" }]
       },
+      isVip: false,
       editor: null,
       editorContent: "",
       cancelVisible: false,
@@ -105,6 +116,10 @@ export default {
         },
         {
           value: 4,
+          label: "手表"
+        },
+        {
+          value: 5,
           label: "化妆品"
         }
       ]
@@ -142,7 +157,29 @@ export default {
     this.editor.create();
   },
   methods: {
-    add() {
+    uploadBanner(v) {
+      if (this.bannerList.length > 0) {
+        let formData = new FormData();
+        formData.append("file", this.bannerList[0].raw);
+        return upload(formData).then(res => {
+          this.form.bannerUrl = res.fileUrl;
+        });
+      }
+    },
+    uploadPic(v) {
+      if (this.picList.length > 0) {
+        let formData = new FormData();
+        // let arr = [];
+        // this.picList.forEach(v => {
+        //   arr.push(v.raw);
+        // });
+        formData.append("file", this.picList[0].raw);
+        return upload(formData).then(res => {
+          this.form.picUrl = res.fileUrl;
+        });
+      }
+    },
+    async add() {
       if (!this.editorContent) {
         this.$message({
           message: "请填写详情",
@@ -150,13 +187,8 @@ export default {
         });
         return;
       }
-      // if (!this.bannerUrl) {
-      //   this.$message({
-      //     message: "请上传封面图",
-      //     type: "warning"
-      //   });
-      //   return;
-      // }
+      await this.uploadBanner();
+      await this.uploadPic();
       var that = this;
       this.$refs["form"].validate(valid => {
         if (valid) {
@@ -164,19 +196,11 @@ export default {
             ...this.form,
             userId: localStorage.getItem("userId"),
             content: this.editorContent,
-            bannerUrl: "",
-            picUrl: ""
+            isVip: Number(this.isVip)
           };
-          console.log(params);
           create(params)
             .then(function(res) {
               if (res.code === 0) {
-                // that.info = res.data;
-                // that.info.create_time = dateFormat(
-                //   "YYYY-mm-dd HH:MM",
-                //   new Date(that.info.create_time + "")
-                // );
-                // that.info.fileUrl = that.info.fileUrl.split(",");
                 that.$router.push({
                   path: "/detail",
                   query: { id: res.data.id }
@@ -206,6 +230,14 @@ export default {
         return false;
       }
     },
+    removeBanner(file, fileList) {
+      console.log(fileList);
+      this.bannerList = fileList;
+    },
+    removePic(file, fileList) {
+      console.log(fileList);
+      this.picList = fileList;
+    },
     fileChanget(file, fileList) {
       this.picList = fileList;
       const isLt2M = file.size / 1024 / 1024 < 5;
@@ -222,5 +254,8 @@ export default {
 .add {
   padding-top: 100px;
   padding-bottom: 100px;
+}
+/deep/.el-dialog__wrapper {
+  z-index: 99999 !important;
 }
 </style>

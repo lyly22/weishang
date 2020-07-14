@@ -11,9 +11,8 @@ vue
           </span>
         </div>
         <ul class="clear">
-          <li class="fl" v-for="(v,k) in fuzList" :key="k" @click="goDetail">
-            >
-            <img src="../assets/vip.png" />
+          <li class="fl" v-for="(v,k) in fuzList" :key="k" @click="goDetail(v.id)">
+            <img :src="v.bannerUrl" width="200" />
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -26,22 +25,36 @@ vue
           </span>
         </div>
         <ul class="clear">
-          <li class="fl" v-for="(v,k) in xiezList" :key="k" @click="goDetail">
-            <img src="../assets/vip.png" />
+          <li class="fl" v-for="(v,k) in xiezList" :key="k" @click="goDetail(v.id)">
+            <img :src="v.bannerUrl" width="200" />
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
       </div>
       <div class="item">
         <div class="title">
-          <h3 class="gray">包包手表货源</h3>
+          <h3 class="gray">包包货源</h3>
           <span>
             <router-link :to="{path:'/list',query:{type:3}}">更多</router-link>
           </span>
         </div>
         <ul class="clear">
-          <li class="fl" v-for="(v,k) in baoList" :key="k" @click="goDetail">
-            <img src="../assets/vip.png" />
+          <li class="fl" v-for="(v,k) in baoList" :key="k" @click="goDetail(v.id)">
+            <img :src="v.bannerUrl" width="200" />
+            <p>{{v.title.substr(0,25)}}</p>
+          </li>
+        </ul>
+      </div>
+      <div class="item">
+        <div class="title">
+          <h3 class="gray">手表货源</h3>
+          <span>
+            <router-link :to="{path:'/list',query:{type:4}}">更多</router-link>
+          </span>
+        </div>
+        <ul class="clear">
+          <li class="fl" v-for="(v,k) in biaoList" :key="k" @click="goDetail(v.id)">
+            <img :src="v.bannerUrl" width="200" />
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -50,12 +63,12 @@ vue
         <div class="title">
           <h3 class="pink">护肤美妆货源</h3>
           <span>
-            <router-link :to="{path:'/list',query:{type:4}}">更多</router-link>
+            <router-link :to="{path:'/list',query:{type:5}}">更多</router-link>
           </span>
         </div>
         <ul class="clear">
-          <li class="fl" v-for="(v,k) in meizList" :key="k" @click="goDetail">
-            <img src="../assets/vip.png" />
+          <li class="fl" v-for="(v,k) in meizList" :key="k" @click="goDetail(v.id)">
+            <img :src="v.bannerUrl" width="200" />
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -65,63 +78,59 @@ vue
 </template>
 
 <script>
+import { indexList } from "@/api/article.js";
 import menuVip from "./menuVip";
+import { dateFormat } from "../js/util";
 export default {
   components: { menuVip },
   data() {
     return {
       activeIndex: "1",
-      fuzList: [
-        {
-          title:
-            "8000家女装一手货源号微商货源 独家女装一手货源女装一手货源女装一手"
-        },
-        {
-          title:
-            "8000家女装一手货源号微商货源 独家女装一手货源女装一手货源女装一手"
-        }
-      ],
-      xiezList: [
-        {
-          title:
-            "8000家女装一手货源号微商货源 独家女装一手货源女装一手货源女装一手"
-        },
-        {
-          title:
-            "8000家女装一手货源号微商货源 独家女装一手货源女装一手货源女装一手"
-        }
-      ],
-      baoList: [
-        {
-          title:
-            "8000家女装一手货源号微商货源 独家女装一手货源女装一手货源女装一手"
-        },
-        {
-          title:
-            "8000家女装一手货源号微商货源 独家女装一手货源女装一手货源女装一手"
-        }
-      ],
-      meizList: [
-        {
-          title:
-            "8000家女装一手货源号微商货源 独家女装一手货源女装一手货源女装一手"
-        },
-        {
-          title:
-            "8000家女装一手货源号微商货源 独家女装一手货源女装一手货源女装一手"
-        }
-      ]
+      fuzList: [],
+      xiezList: [],
+      baoList: [],
+      biaoList: [],
+      meizList: []
     };
   },
   mounted() {
-    console.log(this.$store.state.userName)
+    this.getList();
   },
   methods: {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
     },
-    goDetail() {
-      this.$router.push({ path: "/detail", params: { id: 1 } });
+    goDetail(id) {
+      this.$router.push({ path: "/detail", query: { id } });
+    },
+    getList() {
+      let that = this;
+      indexList({
+        pageNo: 1,
+        pageSize: 10,
+        category: [1, 2, 3, 4, 5].join(",")
+      })
+        .then(function(res) {
+          if (res.code === 0) {
+            for (let n in res.data) {
+              console.log(n)
+              res.data[n].forEach(v => {
+                v.createTime = dateFormat(
+                  "YYYY-mm-dd HH:MM",
+                  new Date(v.createTime + "")
+                );
+              });
+            }
+            that.fuzList = res.data.a;
+            that.xiezList = res.data.b;
+            that.baoList = res.data.c;
+            that.biaoList = res.data.d;
+            that.meizList = res.data.e;
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
     }
   }
 };
@@ -142,6 +151,9 @@ export default {
       padding-left: 30px;
       margin-bottom: 20px;
     }
+    img {
+      max-height: 200px;
+    }
     .item {
       li {
         margin-right: 10px;
@@ -150,7 +162,7 @@ export default {
         &:nth-child(6n) {
           margin-right: 0;
         }
-        width: 180px;
+        width: 200px;
         p {
           cursor: pointer;
           &:hover {

@@ -1,5 +1,6 @@
 var sequelize = require('../config/db.js')
 var Sequelize = require('sequelize')
+const UserModel = require("./user");
 
 var todolist = sequelize.define(
   'article',
@@ -12,13 +13,13 @@ var todolist = sequelize.define(
     },
     // 文章标题
     title: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
       field: 'title'
     },
     // 内容
     content: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false,
       field: 'content'
     },
@@ -27,6 +28,12 @@ var todolist = sequelize.define(
       type: Sequelize.STRING,
       allowNull: false,
       field: 'weixin'
+    },
+    // 内容
+    category: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      field: 'category'
     },
     // 作者
     userId: {
@@ -41,14 +48,14 @@ var todolist = sequelize.define(
     },
     picUrl: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
       field: 'picUrl'
     },
-    isTop: {
-      type: Sequelize.STRING,
+    isVip: {
+      type: Sequelize.INTEGER,
       allowNull: false,
-      field: 'isTop',
-      default: '0'
+      field: 'isVip',
+      defaultValue: 0
     },
     // 创建时间
     createTime: {
@@ -65,4 +72,5 @@ var todolist = sequelize.define(
     freezeTableName: true
   }
 )
+todolist.belongsTo(UserModel, { as: 'ar', foreignKey: 'userId', targetKey: 'id' })
 module.exports = todolist

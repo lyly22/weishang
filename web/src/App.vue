@@ -2,7 +2,9 @@
   <div id="app">
     <el-row class="mt-10" v-if="isShowTop">
       <el-col :span="20">
-        <img src="./assets/logo.png" width="250" class="logo" />
+        <router-link to="/">
+          <img src="./assets/logo.png" width="250" class="logo" />
+        </router-link>
       </el-col>
       <el-col :span="4" class="mt36">
         <el-button type="primary" round @click="goAdd">发布货源</el-button>
@@ -35,8 +37,8 @@ export default {
         ? false
         : true;
     },
-    userName(){
-      return localStorage.getItem('userName')
+    userName() {
+      return localStorage.getItem("userName");
     }
     // ...mapState(["userName", "userId", "jifen"])
   },

@@ -57,7 +57,7 @@ class articleController {
     } else {
       ctx.body = {
         code: -1,
-        msg: "文章ID必须传",
+        msg: "ID必传",
       };
     }
   }
@@ -75,10 +75,10 @@ class articleController {
         let user = await UserModel.getUserDetail(data.userId);
         ctx.body = {
           code: 0,
-          msg: "查询成功",
-          data:{
-            ...data,
-            userName:user.userName
+          // msg: "查询成功",
+          data: {
+            ...data.dataValues,
+            userName: user.userName
           },
         };
       } catch (err) {
@@ -106,8 +106,57 @@ class articleController {
       let data = await ArticleModel.getArticleList(ctx.query);
       ctx.body = {
         code: 0,
-        msg: "查询成功",
-        result: {
+        // msg: "查询成功",
+        data: {
+          total: data.count,
+          list: data.rows,
+        },
+      };
+    } catch (err) {
+      ctx.body = {
+        code: -1,
+        msg: "查询失败",
+        data: err,
+      };
+    }
+  }
+  static async indexList(ctx) {
+    let query = ctx.query;
+    query.category = query.category.split(',')
+    try {
+      // 查询文章列表模型
+      let a = await ArticleModel.getArticleList({ pageNo: query.pageNo, pageSize: query.pageSize, category: query.category[0] });
+      let b = await ArticleModel.getArticleList({ pageNo: query.pageNo, pageSize: query.pageSize, category: query.category[1] });
+      let c = await ArticleModel.getArticleList({ pageNo: query.pageNo, pageSize: query.pageSize, category: query.category[2] });
+      let d = await ArticleModel.getArticleList({ pageNo: query.pageNo, pageSize: query.pageSize, category: query.category[3] });
+      let e = await ArticleModel.getArticleList({ pageNo: query.pageNo, pageSize: query.pageSize, category: query.category[4] });
+      ctx.body = {
+        code: 0,
+        // msg: "查询成功",
+        data: {
+          a: a.rows,
+          b: b.rows,
+          c: c.rows,
+          d: d.rows,
+          e: e.rows,
+        },
+      };
+    } catch (err) {
+      ctx.body = {
+        code: -1,
+        msg: "查询失败",
+        data: err,
+      };
+    }
+  }
+  static async vipList(ctx) {
+    try {
+      // 查询文章列表模型
+      let data = await ArticleModel.getVipList(ctx.query);
+      ctx.body = {
+        code: 0,
+        // msg: "查询成功",
+        data: {
           list: data,
           total: data.length,
         },
