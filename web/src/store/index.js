@@ -17,6 +17,9 @@ export default new Vuex.Store({
       state.userName = v.userName
       state.jifen = v.jifen
     },
+    updateJifen(state, v) {
+      state.jifen = v
+    },
     vipCount(state, v) {
       state.vipCount = v.vipCount
     }

@@ -25,7 +25,7 @@ var userList = sequelize.define(
     jifen: {
       type: Sequelize.INTEGER,
       field: 'jifen',
-      default: '0'
+      defaultValue: '0',
     }
   },
   {

@@ -13,12 +13,6 @@ export function getDetail(params) {
     params
   });
 }
-export function delBlog(params) {
-  return Service({
-    url: "/delBlog",
-    data: params
-  });
-}
 export function create(params) {
   return Service({
     url: "/create",
@@ -54,6 +48,13 @@ export function getVip(params) {
 export function indexList(params) {
   return Service({
     url: "/indexList",
+    method: "get",
+    params
+  });
+}
+export function delArticle(params) {
+  return Service({
+    url: "/delArticle",
     method: "get",
     params
   });

@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="19">
             <h3>{{v.title}}</h3>
-            <p class="time">由{{v.user}}发布于：{{v.createTime}}</p>
+            <p class="time">由{{v.user.userName}}发布于：{{v.createTime}}</p>
           </el-col>
         </el-row>
         <div class="clear">

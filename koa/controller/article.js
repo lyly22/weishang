@@ -14,13 +14,27 @@ class articleController {
       try {
         //创建文章模型
         const ret = await ArticleModel.create(req);
-        //使用刚刚创建的文章ID查询文章详情，且返回文章详情信息
-        // const data = await ArticleModel.getArticleDetail(ret.id);
-        ctx.body = {
-          code: 0,
-          msg: "创建成功",
-          data: ret,
-        };
+        if (req.isVip) {
+          // 获取原积分
+          const user = await UserModel.getUserDetail(req.userId)
+          // 修改积分
+          const userInfo = await UserModel.updateJifen({
+            jifen: user.jifen - 300,
+            userId: user.id
+          })
+          ctx.body = {
+            code: 0,
+            msg: "创建成功",
+            data: ret,
+            jifen: user.jifen - 300
+          };
+        } else {
+          ctx.body = {
+            code: 0,
+            msg: "创建成功",
+            data: ret,
+          };
+        }
       } catch (err) {
         ctx.body = {
           code: -1,
@@ -37,7 +51,7 @@ class articleController {
   }
 
   static async delete(ctx) {
-    let id = ctx.params.id;
+    let id = ctx.query.id;
     if (id) {
       try {
         // 查询文章详情模型
@@ -72,14 +86,10 @@ class articleController {
       try {
         // 查询文章详情模型
         let data = await ArticleModel.getArticleDetail(id);
-        let user = await UserModel.getUserDetail(data.userId);
         ctx.body = {
           code: 0,
           // msg: "查询成功",
-          data: {
-            ...data.dataValues,
-            userName: user.userName
-          },
+          data
         };
       } catch (err) {
         ctx.body = {
@@ -113,6 +123,7 @@ class articleController {
         },
       };
     } catch (err) {
+      console.log(err)
       ctx.body = {
         code: -1,
         msg: "查询失败",
@@ -155,17 +166,16 @@ class articleController {
       let data = await ArticleModel.getVipList(ctx.query);
       ctx.body = {
         code: 0,
-        // msg: "查询成功",
         data: {
-          list: data,
-          total: data.length,
+          total: data.count,
+          list: data.rows,
         },
       };
     } catch (err) {
       ctx.body = {
         code: -1,
         msg: "查询失败",
-        data,
+        data: err,
       };
     }
   }

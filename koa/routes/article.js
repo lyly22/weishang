@@ -30,6 +30,7 @@ router.get('/article', ArtileController.detail)
 
 // 获取文章列表
 router.get('/articles', ArtileController.list)
+router.get('/delArticle', ArtileController.delete)
 
 router.get('/getVip', ArtileController.vipList)
 
@@ -42,12 +43,13 @@ router.post('/upload', upload.single('file'), async (ctx, next) => {
     fileUrl: "http://localhost:3000/upload/" + ctx.req.file.filename, //返回文件名
   }
 })
-router.post('/uploads', upload.array('file'), async (ctx, next) => {
-  ctx.body = {
-    code: 0,
-    msg: '上传成功',
-    fileUrl: "http://localhost:3000/upload/" + ctx.req.file[0].filename, //返回文件名
-  }
+router.post('/uploads', upload.array([{ name: 'file', maxCount: 2 }]), async (ctx, next) => {
+  console.log(ctx.req.files);
+  // ctx.body = {
+  //   code: 0,
+  //   msg: '上传成功',
+  //   fileUrl: "http://localhost:3000/upload/" + ctx.req.file[0].filename, //返回文件名
+  // }
 })
 
 module.exports = router

@@ -5,7 +5,7 @@
       <h2>{{data.title}}</h2>
       <p class="time">
         <i class="el-icon-time"></i>
-        {{data.userName}}发布于{{data.createTime}}
+        {{data.user.userName}}发布于{{data.createTime}}
       </p>
       <div class="top clear">
         <img class="fl banner" width="200" :src="data.bannerUrl" />
@@ -15,8 +15,10 @@
         </div>
       </div>
       <section v-html="data.content"></section>
-      <div class="center">
-        <img v-for="(v,k) in data.picUrl.split(',')" :key="k" :src="v" width="500" />
+      <div class="center" v-if="data.picUrl">
+        <p v-for="(v,k) in data.picUrl.split(',')" :key="k">
+          <img :src="v" width="500" />
+        </p>
       </div>
     </div>
   </div>
@@ -30,7 +32,7 @@ export default {
   components: { menuVip },
   data() {
     return {
-      data: {}
+      data: {user:{}}
     };
   },
   created() {},
@@ -45,7 +47,6 @@ export default {
       })
         .then(function(res) {
           if (res.code === 0) {
-            console.log(this);
             that.data = res.data;
             that.data.createTime = dateFormat(
               "YYYY-mm-dd HH:MM",
@@ -96,10 +97,10 @@ export default {
       font-size: 18px;
       line-height: 38px;
     }
-    .center {
-      img{
-        display: inline-block;
-      }
+  }
+  p {
+    img {
+      width: 800px;
     }
   }
 }

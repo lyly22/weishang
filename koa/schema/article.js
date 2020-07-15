@@ -72,5 +72,5 @@ var todolist = sequelize.define(
     freezeTableName: true
   }
 )
-todolist.belongsTo(UserModel, { as: 'ar', foreignKey: 'userId', targetKey: 'id' })
+todolist.belongsTo(UserModel, { as: 'user', foreignKey: 'userId', targetKey: 'id' })
 module.exports = todolist

@@ -2,6 +2,7 @@
   <div class="add">
     <el-row>
       <el-col :span="15" :offset="5">
+        <h2>发布货源</h2>
         <el-form label-width="80px" :model="form" ref="form" :rules="rules">
           <el-form-item label="标题" prop="title">
             <el-input v-model="form.title" maxlength="50"></el-input>
@@ -40,7 +41,7 @@
               :http-request="uploadPic"
               list-type="picture-card"
               :file-list="picList"
-              :auto-upload="false"
+              :auto-upload="true"
               :on-change="fileChanget"
               :on-remove="removePic"
               :accept="'image/*'"
@@ -53,7 +54,12 @@
             <div ref="editorElem" style="text-align:left;"></div>
           </div>
           <el-form-item label="是否发布为vip" label-width="100px">
-            <el-switch v-model="isVip" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+            <el-switch
+              v-model="isVip"
+              @change="changeVip"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+            ></el-switch>
           </el-form-item>
           <div class="mt20 center">
             <el-button type="primary" round @click="add">发布</el-button>
@@ -79,8 +85,9 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 import E from "wangeditor";
-import { create, upload,uploads } from "@/api/article.js";
+import { create, upload, uploads, getVip } from "@/api/article.js";
 export default {
   data() {
     return {
@@ -99,8 +106,7 @@ export default {
       cancelVisible: false,
       bannerList: [],
       picList: [],
-      bannerUrl: "",
-      picUrl: "",
+      arr: [],
       types: [
         {
           value: 1,
@@ -131,7 +137,6 @@ export default {
     // 编辑器的事件，每次改变会获取其html内容
     this.editor.customConfig.onchange = html => {
       this.editorContent = html;
-      //   this.catchData(this.editorContent); // 把这个html通过catchData的方法传入父组件
     };
     this.editor.customConfig.menus = [
       "head", // 标题
@@ -156,7 +161,17 @@ export default {
     ];
     this.editor.create();
   },
+  computed: {
+    ...mapState(["jifen", "userId"]),
+    jifen() {
+      return sessionStorage.getItem("jifen");
+    },
+    userId() {
+      return sessionStorage.getItem("userId");
+    }
+  },
   methods: {
+    ...mapMutations(["updateJifen"]),
     uploadBanner(v) {
       if (this.bannerList.length > 0) {
         let formData = new FormData();
@@ -167,17 +182,11 @@ export default {
       }
     },
     uploadPic(v) {
-      if (this.picList.length > 0) {
-        let formData = new FormData();
-        // let arr = [];
-        // this.picList.forEach(v => {
-        //   arr.push(v.raw);
-        // });
-        formData.append("file", this.picList[0].raw);
-        return upload(formData).then(res => {
-          this.form.picUrl = res.fileUrl;
-        });
-      }
+      let formData = new FormData();
+      formData.append("file", v.file);
+      upload(formData).then(res => {
+        this.arr.push(res.fileUrl);
+      });
     },
     async add() {
       if (!this.editorContent) {
@@ -188,19 +197,24 @@ export default {
         return;
       }
       await this.uploadBanner();
-      await this.uploadPic();
+      // await this.uploadPic();
       var that = this;
       this.$refs["form"].validate(valid => {
         if (valid) {
           let params = {
             ...this.form,
-            userId: localStorage.getItem("userId"),
+            userId: this.userId,
             content: this.editorContent,
-            isVip: Number(this.isVip)
+            isVip: Number(this.isVip),
+            picUrl: this.arr.join(",")
           };
           create(params)
             .then(function(res) {
               if (res.code === 0) {
+                if (Object.keys(res).includes("jifen")) {
+                  that.updateJifen(res.jifen);
+                  sessionStorage.setItem("jifen", res.jifen);
+                }
                 that.$router.push({
                   path: "/detail",
                   query: { id: res.data.id }
@@ -213,6 +227,29 @@ export default {
         }
       });
     },
+    changeVip(v) {
+      if (v) {
+        getVip().then(res => {
+          if (res.data.total >= 185) {
+            this.$message({
+              message: "暂无广告位",
+              type: "warning"
+            });
+            this.isVip = false;
+          } else if (this.jifen < 300) {
+            this.$message({
+              message: "您的积分不足300，添加客服微信充值后发布",
+              type: "warning"
+            });
+            this.isVip = false;
+          } else {
+            this.$alert("发布vip需扣300积分,有效期30天", {
+              confirmButtonText: "确定"
+            });
+          }
+        });
+      }
+    },
     close() {
       this.cancelVisible = false;
       this.$refs.form.resetFields();
@@ -222,7 +259,6 @@ export default {
       this.$router.push({ path: "/" });
     },
     fileChange(file, fileList) {
-      console.log(fileList);
       this.bannerList = fileList;
       const isLt2M = file.size / 1024 / 1024 < 5;
       if (!isLt2M) {
@@ -231,11 +267,9 @@ export default {
       }
     },
     removeBanner(file, fileList) {
-      console.log(fileList);
       this.bannerList = fileList;
     },
     removePic(file, fileList) {
-      console.log(fileList);
       this.picList = fileList;
     },
     fileChanget(file, fileList) {
@@ -252,10 +286,18 @@ export default {
 
 <style scoped lang='less'>
 .add {
-  padding-top: 100px;
+  padding-top: 50px;
   padding-bottom: 100px;
+  h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #999;
+  }
 }
 /deep/.el-dialog__wrapper {
-  z-index: 99999 !important;
+  z-index: 10001 !important;
+}
+/deep/.w-e-text-container {
+  z-index: 1 !important;
 }
 </style>

@@ -10,10 +10,12 @@
           <el-form-item label="密码" prop="password">
             <el-input v-model="ruleForm.password"></el-input>
           </el-form-item>
-          <el-button type="primary" round @click="submit">登录</el-button><br>
+          <el-button type="primary" round @click="submit">登录</el-button>
+          <br />
           <router-link to="/register">
             <el-button type="text">注册</el-button>
-          </router-link><br>
+          </router-link>
+          <br />
           <router-link to="/">
             <el-button type="text">首页</el-button>
           </router-link>
@@ -24,25 +26,24 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
+import { mapMutations } from "vuex";
 import { login } from "@/api/user.js";
 
 export default {
   name: "login",
   data() {
     return {
-      ruleForm: {
-        userName: "",
-        password: ""
-      },
+      ruleForm: {},
       rules: {
-        userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+        userName: [
+          { required: true, message: "请输入用户名", trigger: "blur" }
+        ],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }]
       }
     };
   },
   methods: {
-    // ...mapMutations(['baseInfo']),
+    ...mapMutations(["baseInfo"]),
     submit() {
       let that = this;
       this.$refs["ruleForm"].validate(valid => {
@@ -50,10 +51,13 @@ export default {
           login(this.ruleForm)
             .then(res => {
               if (res.code === 0) {
-                localStorage.setItem("userId", res.data.id);
-                localStorage.setItem("userName", res.data.userName);
-                // that.baseInfo(res.data)
+                that.baseInfo(res.data);
+                sessionStorage.setItem("userId", res.data.id);
+                sessionStorage.setItem("userName", res.data.userName);
+                sessionStorage.setItem("jifen", res.data.jifen);
                 that.$router.push({ path: "/" });
+                // that.$forceUpdate()
+                 window.location.reload()
               }
             })
             .catch(function(err) {

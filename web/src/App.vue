@@ -8,16 +8,27 @@
       </el-col>
       <el-col :span="4" class="mt36">
         <el-button type="primary" round @click="goAdd">发布货源</el-button>
-        <el-button round @click="toLogin" v-if="!userName">登录</el-button>
+        <el-button round @click="toLogin" v-if="!isLogin">登录</el-button>
         <el-dropdown @command="logOut" placement="bottom" v-else>
           <div class="avatar">
             <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
-            <span>{{userName}}</span>
+            <span>{{isLogin}}</span>
           </div>
           <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>积分：{{jifen}}</el-dropdown-item>
             <el-dropdown-item command="logOut">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+      </el-col>
+    </el-row>
+    <el-row class="mt-10" v-if="isLogin==='admin'">
+      <el-col :span="4" :offset="20">
+        <router-link to="/userList">
+          <el-button type="primary" round>用户管理</el-button>
+        </router-link>
+        <router-link to="/articleList">
+          <el-button type="primary" round>文章管理</el-button>
+        </router-link>
       </el-col>
     </el-row>
     <router-view />
@@ -31,42 +42,47 @@ export default {
   data() {
     return {};
   },
+  created() {},
   computed: {
+    isLogin() {
+      return sessionStorage.getItem("userName");
+    },
+    jifen() {
+      return sessionStorage.getItem("jifen");
+    },
     isShowTop() {
       return ["/login", "/register", "/add"].includes(this.$route.path)
         ? false
         : true;
-    },
-    userName() {
-      return localStorage.getItem("userName");
     }
     // ...mapState(["userName", "userId", "jifen"])
   },
   methods: {
-    // ...mapMutations(["baseInfo"]),
+    ...mapMutations(["baseInfo"]),
     toLogin() {
       this.$router.push({ path: "/login" });
     },
     logOut(v) {
       if (v === "logOut") {
-        // this.baseInfo({
-        //   userId: null,
-        //   userName: null
-        // });
-        localStorage.setItem("userName", "");
-        localStorage.setItem("userId", "");
+        sessionStorage.setItem("userName", "");
+        sessionStorage.setItem("userId", "");
+        this.baseInfo({
+          userId: null,
+          userName: null
+        });
         this.$router.push({ path: "/login" });
       }
     },
     goAdd() {
-      if (!this.userName) {
+      if (!this.isLogin) {
         this.$message({
           message: "请先登录",
           type: "warning"
         });
         return;
+      } else {
+        this.$router.push({ path: "/add" });
       }
-      this.$router.push({ path: "/add" });
     }
   }
 };

@@ -12,7 +12,7 @@ vue
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in fuzList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl" width="200" />
+            <img :src="v.bannerUrl"/>
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -26,7 +26,7 @@ vue
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in xiezList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl" width="200" />
+            <img :src="v.bannerUrl"/>
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -40,7 +40,7 @@ vue
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in baoList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl" width="200" />
+            <img :src="v.bannerUrl"/>
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -54,7 +54,7 @@ vue
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in biaoList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl" width="200" />
+            <img :src="v.bannerUrl"/>
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -68,7 +68,7 @@ vue
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in meizList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl" width="200" />
+            <img :src="v.bannerUrl"/>
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -113,7 +113,6 @@ export default {
         .then(function(res) {
           if (res.code === 0) {
             for (let n in res.data) {
-              console.log(n)
               res.data[n].forEach(v => {
                 v.createTime = dateFormat(
                   "YYYY-mm-dd HH:MM",
@@ -143,13 +142,13 @@ export default {
     margin-bottom: 10px;
   }
   .container {
-    margin: 20px 100px;
+    margin: 10px 100px;
     h3 {
       color: #fff;
       line-height: 40px;
       background: #e3465e;
       padding-left: 30px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     img {
       max-height: 200px;
@@ -162,7 +161,10 @@ export default {
         &:nth-child(6n) {
           margin-right: 0;
         }
-        width: 200px;
+        img{
+          width:182px;
+          height: 130px;
+        }
         p {
           cursor: pointer;
           &:hover {

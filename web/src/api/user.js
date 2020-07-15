@@ -12,3 +12,17 @@ export function register(params) {
     data: params
   });
 }
+export function getUserList(params) {
+  return Service({
+    url: "/getUserList",
+    method: "get",
+    params
+  });
+}
+
+export function updateJifen(params) {
+  return Service({
+    url: "/updateJifen",
+    data: params
+  });
+}

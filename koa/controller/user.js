@@ -60,6 +60,48 @@ class UserController {
       };
     }
   }
+
+  static async updateJifen(ctx) {
+    let req = ctx.request.body;
+    try {
+      const data = await UserModel.updateJifen(req);
+      ctx.body = {
+        code: 0,
+        // msg: "修改成功",
+        data,
+      };
+    } catch (err) {
+      console.log(err)
+      ctx.body = {
+        code: -1,
+        msg: "修改失败",
+        data: err,
+      };
+    }
+  }
+  static async getUserList(ctx) {
+    let req = ctx.query;
+    try {
+      const data = await UserModel.getUserList(req);
+      if (data) {
+        ctx.body = {
+          code: 0,
+          // msg: "查询成功",
+          data: {
+            total: data.count,
+            list: data.rows,
+          },
+        };
+      }
+    } catch (err) {
+      console.log(err)
+      ctx.body = {
+        code: -1,
+        msg: "查询失败",
+        data: err,
+      };
+    }
+  }
 }
 
 module.exports = UserController;

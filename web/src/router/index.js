@@ -6,6 +6,8 @@ import index from '@/components/index'
 import detail from '@/components/detail'
 import list from '@/components/list'
 import add from '@/components/add'
+import userList from '@/components/userList'
+import articleList from '@/components/articleList'
 
 Vue.use(Router)
 let router = new Router({
@@ -42,11 +44,21 @@ let router = new Router({
       meta: {
         requireAuth: true
       }
-    }
+    },
+    {
+      path: '/userList',
+      name: 'userList',
+      component: userList
+    },
+    {
+      path: '/articleList',
+      name: 'articleList',
+      component: articleList
+    },
   ]
 })
 router.beforeEach((to, from, next) => {
-  let islogin = localStorage.getItem('userName')
+  let islogin = sessionStorage.getItem('userName')
   if (to.path == '/login') {
     if (islogin) {
       next('/')
@@ -56,6 +68,8 @@ router.beforeEach((to, from, next) => {
   } else {
     if (to.meta.requireAuth && !islogin) {
       next('/login')
+    } else if ((to.path == '/userList' || to.path == '/articleList') && islogin != 'admin') {
+      next('/')
     } else {
       next()
     }

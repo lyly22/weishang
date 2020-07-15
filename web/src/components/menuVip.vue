@@ -66,16 +66,12 @@ export default {
   },
   methods: {
     handleSelect(key, keyPath) {
-      console.log(key, keyPath);
-        this.activeIndex=String(key)
+      this.activeIndex = String(key);
     },
     goDetail(v) {
       this.$router.push({ path: "/detail", query: { id: v } });
     },
     goList(v) {
-      // this.$nextTick(()=>{
-      //   this.activeIndex=String(v.value+'1')
-      // })
       this.$router.push({ path: "/list", query: { type: v.value } });
     },
     getVip() {
@@ -102,13 +98,14 @@ export default {
     margin-bottom: 10px;
   }
   .vip {
-    margin: 20px 100px;
+    margin: 0 100px;
   }
   li {
     margin-right: 10px;
-    margin-bottom: 15px;
+    margin-top: 5px;
     img {
-      max-width: 220px;
+      width: 182px;
+      height: 120px;
     }
     cursor: pointer;
     &:nth-child(6n) {
