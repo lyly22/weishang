@@ -230,7 +230,7 @@ export default {
     changeVip(v) {
       if (v) {
         getVip().then(res => {
-          if (res.data.total >= 185) {
+          if (res.data.total >= 18) {
             this.$message({
               message: "暂无广告位",
               type: "warning"

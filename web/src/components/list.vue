@@ -125,7 +125,8 @@ export default {
       cursor: pointer;
     }
     img {
-      max-height: 200px;
+      width: 180px;
+      height: 140px;
     }
     .el-row {
       margin-bottom: 15px;
