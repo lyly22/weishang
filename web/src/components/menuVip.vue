@@ -112,5 +112,9 @@ export default {
       margin-right: 0;
     }
   }
+  /deep/.el-menu--horizontal>.el-menu-item {
+    height: 45px;
+    line-height: 45px;
+  }
 }
 </style>

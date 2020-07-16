@@ -12,7 +12,7 @@ vue
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in fuzList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl"/>
+            <img :src="v.bannerUrl" />
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -26,21 +26,21 @@ vue
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in xiezList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl"/>
-            <p>{{v.title.substr(0,25)}}</p>
+            <img :src="v.bannerUrl" />
+            <p>{{v.title.substr(0,27)}}</p>
           </li>
         </ul>
       </div>
       <div class="item">
         <div class="title">
-          <h3 class="gray">包包货源</h3>
+          <h3 class="gold">包包货源</h3>
           <span>
             <router-link :to="{path:'/list',query:{type:3}}">更多</router-link>
           </span>
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in baoList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl"/>
+            <img :src="v.bannerUrl" />
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -54,7 +54,7 @@ vue
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in biaoList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl"/>
+            <img :src="v.bannerUrl" />
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -68,7 +68,7 @@ vue
         </div>
         <ul class="clear">
           <li class="fl" v-for="(v,k) in meizList" :key="k" @click="goDetail(v.id)">
-            <img :src="v.bannerUrl"/>
+            <img :src="v.bannerUrl" />
             <p>{{v.title.substr(0,25)}}</p>
           </li>
         </ul>
@@ -158,11 +158,12 @@ export default {
         margin-right: 10px;
         margin-bottom: 15px;
         cursor: pointer;
+        width: 182px;
         &:nth-child(6n) {
           margin-right: 0;
         }
-        img{
-          width:182px;
+        img {
+          width: 182px;
           height: 130px;
         }
         p {
@@ -193,6 +194,9 @@ export default {
         }
         .pink {
           background: #ff2f2ffa;
+        }
+        .gold {
+          background: #f3ca6f;
         }
       }
     }

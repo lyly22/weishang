@@ -2,7 +2,8 @@ import axios from 'axios'
 import { Message, Loading } from 'element-ui'
 const ConfigBaseURL =
   process.env.NODE_ENV === 'production'
-    ? 'http://127.0.0.1:3000'
+    // ? 'http://127.0.0.1:3000'
+    ? 'http://47.93.213.104:3000'
     : 'http://127.0.0.1:3000'
 let loadingInstance = null
 export const Service = axios.create({

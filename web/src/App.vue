@@ -31,6 +31,15 @@
         </router-link>
       </el-col>
     </el-row>
+    <el-popover
+      placement="top-start"
+      title="删除举报充值请添加客服微信"
+      width="200"
+      trigger="hover"
+      content="12345678"
+    >
+      <el-button slot="reference" type="primary" icon="el-icon-chat-line-round" circle></el-button>
+    </el-popover>
     <router-view />
   </div>
 </template>
@@ -43,6 +52,14 @@ export default {
     return {};
   },
   created() {},
+  // watch: {
+  //   isLogin(v) {
+  //     if (v) {
+  //       console.log(999);
+  //       this.$forceUpdate();
+  //     }
+  //   }
+  // },
   computed: {
     isLogin() {
       return sessionStorage.getItem("userName");
@@ -107,6 +124,11 @@ export default {
     span {
       margin-left: 10px;
     }
+  }
+  /deep/.el-popover__reference {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
   }
 }
 </style>
