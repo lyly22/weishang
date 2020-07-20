@@ -34,22 +34,30 @@ class UserController {
   static async login(ctx) {
     let req = ctx.request.body;
     try {
-      const data = await UserModel.ifLogin(req);
-      if (data) {
-        ctx.body = {
-          code: 0,
-          msg: "登录成功",
-          data: {
-            userName: data.userName,
-            id: data.id,
-            jifen: data.jifen
-          },
-        };
-      } else {
+      const ifExist = await UserModel.ifExistUser(req)
+      if (!ifExist) {
         ctx.body = {
           code: -1,
-          msg: "用户名或密码错误",
-        };
+          msg: '用户不存在'
+        }
+      } else {
+        const data = await UserModel.ifLogin(req);
+        if (data) {
+          ctx.body = {
+            code: 0,
+            msg: "登录成功",
+            data: {
+              userName: data.userName,
+              id: data.id,
+              jifen: data.jifen
+            },
+          };
+        } else {
+          ctx.body = {
+            code: -1,
+            msg: "用户名或密码错误",
+          };
+        }
       }
     } catch (err) {
       console.log(err)
@@ -79,6 +87,25 @@ class UserController {
       };
     }
   }
+
+  static async getUserDetail(ctx) {
+    let req = ctx.query;
+    try {
+      const data = await UserModel.getUserDetail(req.userId);
+      ctx.body = {
+        code: 0,
+        data,
+      };
+    } catch (err) {
+      console.log(err)
+      ctx.body = {
+        code: -1,
+        msg: "查询失败",
+        data: err,
+      };
+    }
+  }
+
   static async getUserList(ctx) {
     let req = ctx.query;
     try {

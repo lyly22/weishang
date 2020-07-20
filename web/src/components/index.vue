@@ -74,6 +74,7 @@ vue
         </ul>
       </div>
     </div>
+    <div class="copyright">苏ICP备20042368号</div>
   </div>
 </template>
 
@@ -200,6 +201,12 @@ export default {
         }
       }
     }
+  }
+  .copyright {
+    text-align: center;
+    background: #1f8ecb;
+    color: #fff;
+    line-height: 26px;
   }
 }
 </style>

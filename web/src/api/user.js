@@ -26,3 +26,11 @@ export function updateJifen(params) {
     data: params
   });
 }
+
+export function getUserDetail(params) {
+  return Service({
+    url: "/getUserDetail",
+    method: "get",
+    params
+  });
+}

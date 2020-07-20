@@ -8,7 +8,11 @@ const router = new Router({
 router.post('/register', UserController.create)
 
 router.post('/login', UserController.login)
+
 router.post('/updateJifen', UserController.updateJifen)
+
 router.get('/getUserList', UserController.getUserList)
+
+router.get('/getUserDetail', UserController.getUserDetail)
 
 module.exports = router

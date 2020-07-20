@@ -30,6 +30,7 @@ router.get('/article', ArtileController.detail)
 
 // 获取文章列表
 router.get('/articles', ArtileController.list)
+
 router.get('/delArticle', ArtileController.delete)
 
 router.get('/getVip', ArtileController.vipList)
@@ -44,7 +45,6 @@ router.post('/upload', upload.single('file'), async (ctx, next) => {
   }
 })
 router.post('/uploads', upload.array([{ name: 'file', maxCount: 2 }]), async (ctx, next) => {
-  console.log(ctx.req.files);
   // ctx.body = {
   //   code: 0,
   //   msg: '上传成功',

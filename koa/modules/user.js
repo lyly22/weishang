@@ -8,7 +8,7 @@ class UserModel {
     return await User.create({
       userName: data.userName,
       password: data.password,
-      jifen: 0,
+      jifen: 3,
     });
   }
   static async updateJifen(data) {

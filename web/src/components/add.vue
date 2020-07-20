@@ -87,6 +87,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import E from "wangeditor";
+import { getUserDetail } from "@/api/user.js";
 import { create, upload, uploads, getVip } from "@/api/article.js";
 export default {
   data() {
@@ -131,6 +132,7 @@ export default {
       ]
     };
   },
+  inject: ["reload"],
   created() {},
   mounted() {
     this.editor = new E(this.$refs.editorElem);
@@ -161,17 +163,8 @@ export default {
     ];
     this.editor.create();
   },
-  computed: {
-    ...mapState(["jifen", "userId"]),
-    jifen() {
-      return sessionStorage.getItem("jifen");
-    },
-    userId() {
-      return sessionStorage.getItem("userId");
-    }
-  },
+  computed: {},
   methods: {
-    ...mapMutations(["updateJifen"]),
     uploadBanner(v) {
       if (this.bannerList.length > 0) {
         let formData = new FormData();
@@ -203,7 +196,7 @@ export default {
         if (valid) {
           let params = {
             ...this.form,
-            userId: this.userId,
+            userId: localStorage.getItem("userId"),
             content: this.editorContent,
             isVip: Number(this.isVip),
             picUrl: this.arr.join(",")
@@ -212,13 +205,13 @@ export default {
             .then(function(res) {
               if (res.code === 0) {
                 if (Object.keys(res).includes("jifen")) {
-                  that.updateJifen(res.jifen);
-                  sessionStorage.setItem("jifen", res.jifen);
+                  localStorage.setItem("jifen", res.jifen);
                 }
                 that.$router.push({
                   path: "/detail",
                   query: { id: res.data.id }
                 });
+                that.reload();
               }
             })
             .catch(function(err) {
@@ -236,16 +229,24 @@ export default {
               type: "warning"
             });
             this.isVip = false;
-          } else if (this.jifen < 300) {
-            this.$message({
-              message: "您的积分不足300，添加客服微信充值后发布",
-              type: "warning"
-            });
-            this.isVip = false;
           } else {
-            this.$alert("发布vip需扣300积分,有效期30天", {
-              confirmButtonText: "确定"
-            });
+            getUserDetail({ userId: localStorage.getItem("userId") }).then(
+              res => {
+                if (res.code === 0) {
+                  if (res.data.jifen < 300) {
+                    this.$message({
+                      message: "您的积分不足300，添加客服微信充值后发布",
+                      type: "warning"
+                    });
+                    this.isVip = false;
+                  } else {
+                    this.$alert("发布vip需扣300积分,有效期30天", {
+                      confirmButtonText: "确定"
+                    });
+                  }
+                }
+              }
+            );
           }
         });
       }

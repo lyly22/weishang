@@ -6,7 +6,7 @@
           <img src="./assets/logo.png" width="250" class="logo" />
         </router-link>
       </el-col>
-      <el-col :span="4" class="mt36">
+      <el-col :span="4" class="mt36" v-if="updateInfo">
         <el-button type="primary" round @click="goAdd">发布货源</el-button>
         <el-button round @click="toLogin" v-if="!isLogin">登录</el-button>
         <el-dropdown @command="logOut" placement="bottom" v-else>
@@ -21,7 +21,7 @@
         </el-dropdown>
       </el-col>
     </el-row>
-    <el-row class="mt-10" v-if="isLogin==='admin'">
+    <el-row class="mt-10" v-if="isLogin==='adminroot'">
       <el-col :span="4" :offset="20">
         <router-link to="/userList">
           <el-button type="primary" round>用户管理</el-button>
@@ -33,10 +33,10 @@
     </el-row>
     <el-popover
       placement="top-start"
-      title="删除举报充值请添加客服微信"
+      title="添加积分请联系客服qq"
       width="200"
       trigger="hover"
-      content="12345678"
+      content="2020568267"
     >
       <el-button slot="reference" type="primary" icon="el-icon-chat-line-round" circle></el-button>
     </el-popover>
@@ -46,48 +46,56 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import { login, getUserDetail } from "@/api/user.js";
 export default {
   name: "App",
+  provide() {
+    return {
+      reload: this.reload
+    };
+  },
   data() {
-    return {};
+    return {
+      updateInfo: true,
+      isLogin: localStorage.getItem("userName"),
+      jifen: localStorage.getItem("jifen"),
+      userId: localStorage.getItem("userId")
+    };
   },
   created() {},
-  // watch: {
-  //   isLogin(v) {
-  //     if (v) {
-  //       console.log(999);
-  //       this.$forceUpdate();
-  //     }
-  //   }
-  // },
   computed: {
-    isLogin() {
-      return sessionStorage.getItem("userName");
-    },
-    jifen() {
-      return sessionStorage.getItem("jifen");
-    },
     isShowTop() {
       return ["/login", "/register", "/add"].includes(this.$route.path)
         ? false
         : true;
     }
-    // ...mapState(["userName", "userId", "jifen"])
   },
   methods: {
     ...mapMutations(["baseInfo"]),
+    reload() {
+      this.isLogin = localStorage.getItem("userName");
+      this.jifen = localStorage.getItem("jifen");
+      this.userId = localStorage.getItem("userId");
+      this.updateInfo = false;
+      this.$nextTick(() => {
+        this.updateInfo = true;
+      });
+    },
     toLogin() {
       this.$router.push({ path: "/login" });
     },
     logOut(v) {
       if (v === "logOut") {
-        sessionStorage.setItem("userName", "");
-        sessionStorage.setItem("userId", "");
+        localStorage.setItem("userName", "");
+        localStorage.setItem("userId", "");
+        localStorage.setItem("jifen", 0);
         this.baseInfo({
-          userId: null,
-          userName: null
+          userId: "",
+          userName: "",
+          jifen: 0
         });
         this.$router.push({ path: "/login" });
+        this.reload();
       }
     },
     goAdd() {
@@ -98,7 +106,23 @@ export default {
         });
         return;
       } else {
-        this.$router.push({ path: "/add" });
+        getUserDetail({ userId: this.userId })
+          .then(res => {
+            if (res.code === 0) {
+              if (res.data.jifen < 1) {
+                this.$message({
+                  message: "没有可用积分，联系客服添加积分",
+                  type: "warning"
+                });
+                return;
+              } else {
+                this.$router.push({ path: "/add" });
+              }
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
       }
     }
   }

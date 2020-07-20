@@ -14,11 +14,11 @@ class articleController {
       try {
         //创建文章模型
         const ret = await ArticleModel.create(req);
+        // 获取原积分
+        const user = await UserModel.getUserDetail(req.userId)
         if (req.isVip) {
-          // 获取原积分
-          const user = await UserModel.getUserDetail(req.userId)
           // 修改积分
-          const userInfo = await UserModel.updateJifen({
+          await UserModel.updateJifen({
             jifen: user.jifen - 300,
             userId: user.id
           })
@@ -29,10 +29,16 @@ class articleController {
             jifen: user.jifen - 300
           };
         } else {
+          // 修改积分
+          await UserModel.updateJifen({
+            jifen: user.jifen - 1,
+            userId: user.id
+          })
           ctx.body = {
             code: 0,
             msg: "创建成功",
             data: ret,
+            jifen: user.jifen - 1
           };
         }
       } catch (err) {

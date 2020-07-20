@@ -31,6 +31,7 @@ import { login } from "@/api/user.js";
 
 export default {
   name: "login",
+  inject: ["reload"],
   data() {
     return {
       ruleForm: {},
@@ -52,12 +53,11 @@ export default {
             .then(res => {
               if (res.code === 0) {
                 that.baseInfo(res.data);
-                sessionStorage.setItem("userId", res.data.id);
-                sessionStorage.setItem("userName", res.data.userName);
-                sessionStorage.setItem("jifen", res.data.jifen);
+                localStorage.setItem("userId", res.data.id);
+                localStorage.setItem("userName", res.data.userName);
+                localStorage.setItem("jifen", res.data.jifen);
                 that.$router.push({ path: "/" });
-                // that.$forceUpdate()
-                 window.location.reload()
+                that.reload();
               }
             })
             .catch(function(err) {

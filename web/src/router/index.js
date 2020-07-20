@@ -58,7 +58,7 @@ let router = new Router({
   ]
 })
 router.beforeEach((to, from, next) => {
-  let islogin = sessionStorage.getItem('userName')
+  let islogin = localStorage.getItem('userName')
   if (to.path == '/login') {
     if (islogin) {
       next('/')
